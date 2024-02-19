@@ -1,0 +1,5 @@
+{
+  "trailingComma": "es5",
+  "singleAttributePerLine": true,
+  "printWidth": 100
+}
