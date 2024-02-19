@@ -10,6 +10,7 @@ module.exports = function task() {
     "prettier",
     "eslint-config-prettier",
     "eslint-plugin-prettier",
+    "eslint-plugin-json",
   ];
 
   // Add node modules to the respective ignore files
@@ -21,10 +22,7 @@ module.exports = function task() {
 
   pkg
     // Set linting script
-    .setScript(
-      "lint",
-      "eslint . --cache --fix --cache-location './node_modules/@eslint/.eslintcache/"
-    )
+    .setScript("lint", "eslint . --cache --fix --cache-location './node_modules/@eslint/.eslintcache/'")
     // Set pretest script
     .prependScript("pretest", "npm run lint")
     // Add lint-staged configuration
@@ -51,6 +49,15 @@ module.exports = function task() {
 
   // Run the husky installation script
   husky.install();
-  // Update the pre-commit configuration
-  husky.add(".husky/pre-commit", "npx lint-staged");
+
+  // Get the current pre-commit configuration
+  const precommitConfig = lines(".husky/pre-commit", []).get();
+
+  // Check if lint staged is already configured
+  const isConfigured = precommitConfig.filter((line) => line.includes("lint-staged")).length > 0;
+
+  if (!isConfigured) {
+    // Update the pre-commit configuration
+    husky.add(".husky/pre-commit", "npx lint-staged");
+  }
 };
